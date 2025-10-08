@@ -39,7 +39,7 @@ jobs:
           
           # 🚨🚨🚨 수정된 명령어: 파일 저장 옵션만 명확하게 사용 🚨🚨🚨
           # --output-file findings.json 대신, 쉘 리다이렉션을 사용하여 실패 오류를 무시합니다.
-          checkov -f main.tf -o json > result.json 2>&1
+          checkov -f main.tf -o json > findings.json 2>&1
           
           # Checkov이 0이 아닌 exit code (1)로 종료되어도 워크플로우가 멈추지 않도록 설정
         continue-on-error: true
