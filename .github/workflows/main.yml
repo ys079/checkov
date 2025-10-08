@@ -1,0 +1,41 @@
+# 파일 이름: .github/workflows/main.yml
+
+name: AI Security Review Bot Runner # 워크플로우의 이름입니다.
+
+# 1. 언제 실행할지 설정 (트리거)
+on:
+  pull_request:
+    # PR이 열리거나(opened), 업데이트되거나(synchronize), 다시 열릴 때(reopened) 실행
+    types: [opened, synchronize, reopened] 
+
+# 2. 수행할 작업(Job) 정의
+jobs:
+  security_analysis: # 이 작업의 이름은 'security_analysis'입니다.
+    runs-on: ubuntu-latest # GitHub가 제공하는 가상 Linux 환경에서 실행합니다.
+
+    # 3. 단계별 실행 (Steps)
+    steps:
+      
+      # 3-1. Git 코드 가져오기 (필수)
+      - name: Checkout Code
+        uses: actions/checkout@v4 # 저장소의 코드를 가상 환경으로 내려받습니다.
+      
+      # 3-2. Python 환경 설정
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x' # Python 3 버전 사용을 명시합니다.
+
+      # 3-3. Python 라이브러리 설치 (Checkov 설치 준비)
+      - name: Install Dependencies (checkov)
+        run: |
+          pip install checkov 
+          
+      # 3-4. Checkov 실행 및 결과 JSON 파일 저장 (핵심)
+      - name: Run Checkov Scan and Save JSON
+        # 'run:' 아래에 터미널 명령어를 입력합니다.
+        run: |
+          # 'main.tf' 파일을 스캔하여 결과를 result.json 파일에 저장합니다.
+          checkov -f main.tf -o json --output-file result.json
+          
+      # (다음 단계: Python 스크립트 실행은 다음 작업에서 추가합니다.)
