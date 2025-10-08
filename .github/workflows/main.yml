@@ -39,6 +39,7 @@ jobs:
           checkov -f main.tf -o json --output-file result.json
           
       # (다음 단계: Python 스크립트 실행은 다음 작업에서 추가합니다.)
+
       - name: Run AI Review Script
         env:
           # 🚨🚨 GitHub Secrets에서 발급받은 키를 환경 변수로 전달 🚨🚨
@@ -52,3 +53,4 @@ jobs:
         run: |
           # main.py 스크립트를 실행하여 AI 분석 및 댓글 게시를 명령
           python main.py
+
