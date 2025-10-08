@@ -184,7 +184,7 @@ if __name__ == "__main__":
     logger.info("--- AI 보안 리뷰 봇 (Gemini) 실행 시작 ---")
     
     # 2. 스캔 결과 파일 읽기 및 간결화
-    summary_data = read_scan_result("result.json")
+    summary_data = read_scan_result("findings.json")
 
     if summary_data:
         logger.info("✅ JSON 분석 데이터 준비 완료.")
