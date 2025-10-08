@@ -63,5 +63,7 @@ resource "aws_db_instance" "unencrypted_db" {
   storage_encrypted    = true # 암호화는 안전하게 true로 설정
 
   # 취약점: 백업 보존 기간을 '0일'로 설정하여 자동 백업을 비활성화함
+  # main.tf 파일에 추가
+  # This is a test change for the AI bot PR.
   backup_retention_period = 0
 }
