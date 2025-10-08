@@ -1,0 +1,62 @@
+# 파일 이름: .github/workflows/main.yml
+
+name: AI Security Review Bot Runner # 워크플로우의 이름입니다.
+
+# 1. 언제 실행할지 설정 (트리거)
+on:
+  pull_request:
+    # PR이 열리거나(opened), 업데이트되거나(synchronize), 다시 열릴 때(reopened) 실행
+    types: [opened, synchronize, reopened] 
+
+# 2. 수행할 작업(Job) 정의
+jobs:
+  security_analysis: # 이 작업의 이름은 'security_analysis'입니다.
+    runs-on: ubuntu-latest # GitHub가 제공하는 가상 Linux 환경에서 실행합니다.
+
+    # 3. 단계별 실행 (Steps)
+    steps:
+      
+      # 3-1. Git 코드 가져오기 (필수)
+      - name: Checkout Code
+        uses: actions/checkout@v4 # 저장소의 코드를 가상 환경으로 내려받습니다.
+      
+      # 3-2. Python 환경 설정
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x' # Python 3 버전 사용을 명시합니다.
+
+      # 3-3. Python 라이브러리 설치 (Checkov 설치 준비)
+      - name: Install Dependencies (checkov)
+        run: |
+          pip install checkov 
+          
+      # 3-4. Checkov 실행 및 결과 JSON 파일 저장 (핵심)
+      - name: Run Checkov Scan and Save JSON
+        run: |
+          echo "Checkov 설치 시작..."
+          pip install checkov 
+          
+          # 🚨🚨🚨 수정된 명령어: 파일 저장 옵션만 명확하게 사용 🚨🚨🚨
+          # --output-file findings.json 대신, 쉘 리다이렉션을 사용하여 실패 오류를 무시합니다.
+          checkov -f main.tf -o json > result.json 2>&1
+          
+          # Checkov이 0이 아닌 exit code (1)로 종료되어도 워크플로우가 멈추지 않도록 설정
+        continue-on-error: true
+          
+      # (다음 단계: Python 스크립트 실행은 다음 작업에서 추가합니다.)
+
+      - name: Run AI Review Script
+        env:
+          # 🚨🚨 GitHub Secrets에서 발급받은 키를 환경 변수로 전달 🚨🚨
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }} 
+          GITHUB_PAT: ${{ secrets.MY_GITHUB_TOKEN }}
+          
+          # 🚨 PR 번호 및 저장소 정보를 Python 스크립트로 전달
+          PR_NUMBER: ${{ github.event.pull_request.number }} # PR 번호를 자동으로 가져옴
+          GITHUB_REPOSITORY: ${{ github.repository }} # "user/repo" 형식의 저장소 이름을 가져옴
+          
+        run: |
+          # main.py 스크립트를 실행하여 AI 분석 및 댓글 게시를 명령
+          python main.py
+
