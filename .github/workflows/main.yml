@@ -33,11 +33,16 @@ jobs:
           
       # 3-4. Checkov 실행 및 결과 JSON 파일 저장 (핵심)
       - name: Run Checkov Scan and Save JSON
-        # 'run:' 아래에 터미널 명령어를 입력합니다.
         run: |
-          # 'main.tf' 파일을 스캔하여 결과를 result.json 파일에 저장합니다.
-          checkov -f main.tf -o json --output-file findings.json
-          echo "findings.json 파일 저장 완료."
+          echo "Checkov 설치 시작..."
+          pip install checkov 
+          
+          # 🚨🚨🚨 수정된 명령어: 파일 저장 옵션만 명확하게 사용 🚨🚨🚨
+          # --output-file findings.json 대신, 쉘 리다이렉션을 사용하여 실패 오류를 무시합니다.
+          checkov -f main.tf -o json > result.json 2>&1
+          
+          # Checkov이 0이 아닌 exit code (1)로 종료되어도 워크플로우가 멈추지 않도록 설정
+        continue-on-error: true
           
       # (다음 단계: Python 스크립트 실행은 다음 작업에서 추가합니다.)
 
