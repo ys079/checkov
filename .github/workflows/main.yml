@@ -30,6 +30,7 @@ jobs:
       - name: Install Dependencies (checkov)
         run: |
           pip install checkov 
+          pip install checkov google-genai requests python-dotenv 
           
       # 3-4. Checkov 실행 및 결과 JSON 파일 저장 (핵심)
       - name: Run Checkov Scan and Save JSON

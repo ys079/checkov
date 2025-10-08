@@ -68,6 +68,7 @@ resource "aws_db_instance" "unencrypted_db" {
   # 테스트용 새 주석 2
   # 테 새 주 3
   # 테 새 주 4
+  # 5
   # This is a test change for the AI bot PR.
   backup_retention_period = 0
 }
